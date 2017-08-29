@@ -12,6 +12,13 @@
 // @grant        none
 // ==/UserScript==
 
+
+
+/**
+https://github.com/Artistan/harvest-scripts-integration/issues/1
+must override CSP for github or use their custom plugin for github.
+*/
+
 jQuery.noConflict();
 
 var IV = {};
