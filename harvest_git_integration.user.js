@@ -33,8 +33,8 @@ IV.pageState = {
 };
 
 IV.selectors = {
-    harvestInvisionTimer: "#harvest-invision-timer",
-    assignment: ".btn:contains('Comment'),.btn:contains('Close'),.btn:contains('New'),.btn:contains('Edit')",
+    harvestInvisionTimer: ".harvest-timer",
+    assignment: ".btn:contains('Comment'),.btn:contains('Commit'),.btn:contains('Close'),.btn:contains('New'),.btn:contains('Edit')",
     harvestMessaging: "#harvest-messaging"
 };
 
@@ -83,25 +83,21 @@ IV.onHashChange = function () {
 
 IV.buildTimer = function () {
    var timer = jQuery('<div/>', {
-    "id": "harvest-invision-timer",
     "text": "Harvest",
     "class" : "hidden-xs hidden-sm btn btn-grouped btn-warning btn-inverted harvest-timer",
-    "data-item": '{"id": ' + IV.pageState.itemId + ', "name": "' + 'Git*: ' + IV.pageState.Repo + ' ' + IV.pageState.action + '"}',
-    "data-account": '{"id": ' + IV.pageState.UserGroup + '}'
+    "data-item": '{"id": ' + IV.pageState.itemId + ', "name": "' + '' + IV.pageState.UserGroup + '/' + IV.pageState.Repo + ' :: ' + IV.pageState.action + '"}',
+    "data-account": '{"id": ' + IV.pageState.UserGroup + '}',
+    "data-default": '{"proeject_name": ' + IV.pageState.UserGroup + '/' + IV.pageState.Repo + ' :: ' + IV.pageState.action + '}'
    });
    jQuery(IV.selectors.assignment).parent('div').append(timer);
    jQuery("div:not([class*=group]):not([class*=issuable-actions]) > div.harvest-timer").removeClass('btn-grouped');
    if (jQuery(IV.selectors.harvestInvisionTimer).length) {
-      try {
-          var event = new CustomEvent("harvest-event:timers:add", {
-              detail: { element: document.querySelector(IV.selectors.harvestInvisionTimer) }
-          });
-          document.querySelector(IV.selectors.harvestMessaging).dispatchEvent(event);
-      }
-      catch (err) {
-        alert('You must be logged in to Harvest before accessing this screen: ' + err.message);
-      }
-
+       jQuery(IV.selectors.harvestInvisionTimer).each(function(){
+           jQuery(IV.selectors.harvestMessaging).trigger({
+               type: "harvest-event:timers:add",
+               element: jQuery(this)
+           });
+       });
    } else {
        alert('Git* Harvest Integration: DOM injection of the new timer failed');
    }
