@@ -56,7 +56,8 @@ IV.getPlatformConfig = function () {
     var hostLink = window.location.href;
     return {
         applicationName: "GitRepository",
-        permalink: hostLink
+        permalink: hostLink,
+        skipStyling: true
     };
 };
 
@@ -66,6 +67,11 @@ IV.initialize = function () {
     jQuery('<script>')
     .attr('type', 'text/javascript')
     .text(harvestPlatformConfigScript)
+    .appendTo('head');
+
+    jQuery('<style>')
+    .attr('type', 'text/css')
+    .text('.harvest-timer.styled { box-sizing: content-box;}')
     .appendTo('head');
 
    IV.handlePageState();
@@ -78,12 +84,13 @@ IV.onHashChange = function () {
 IV.buildTimer = function () {
    var timer = jQuery('<div/>', {
     "id": "harvest-invision-timer",
-    "class" : "harvest-timer",
+    "text": "Harvest",
+    "class" : "hidden-xs hidden-sm btn btn-grouped btn-warning btn-inverted harvest-timer",
     "data-item": '{"id": ' + IV.pageState.itemId + ', "name": "' + 'Git*: ' + IV.pageState.Repo + ' ' + IV.pageState.action + '"}',
-    "data-account": '{"id": ' + IV.pageState.UserGroup + '}',
-    "style": "float: left; margin-top: 10px; margin-right: 10px;"
+    "data-account": '{"id": ' + IV.pageState.UserGroup + '}'
    });
    jQuery(IV.selectors.assignment).parent('div').append(timer);
+   jQuery("div:not([class*=group]):not([class*=issuable-actions]) > div.harvest-timer").removeClass('btn-grouped');
    if (jQuery(IV.selectors.harvestInvisionTimer).length) {
       try {
           var event = new CustomEvent("harvest-event:timers:add", {
